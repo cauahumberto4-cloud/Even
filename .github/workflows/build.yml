@@ -1,0 +1,38 @@
+name: Compilar EventoManager
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'EventoManager-Source.zip'
+      - '.github/workflows/build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar arquivos
+        uses: actions/checkout@v4
+
+      - name: Instalar Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Extrair projeto
+        run: |
+          unzip EventoManager-Source.zip
+
+      - name: Compilar plugin
+        run: |
+          cd EventoManager
+          mvn clean package
+
+      - name: Salvar JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: EventoManager-JAR
+          path: EventoManager/target/*.jar
